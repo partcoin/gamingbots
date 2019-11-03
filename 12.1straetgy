@@ -1,0 +1,35 @@
+const baseBet = 3600;// Starting Bet - 50000 = 500 ETHOS and so on.
+var LastSeen = 0;
+var FixedWait = 24;
+var currentBet = 3600;// This bet is increased each time you lose. 50000 = 500 ETHOS and so on.
+var cashOut = 1210;
+engine.on('game_starting', function() {
+    if (engine.lastGamePlay() == 'LOST') {
+        currentBet = currentBet+ baseBet;
+       
+    }
+    if(engine.lastGamePlay() == 'WON'){
+        currentBet = baseBet;
+        cashOut = 1210;
+    }
+    if (LastSeen < FixedWait) {
+		console.log('Waiting Phase... ' + (FixedWait - LastSeen ));
+	}
+	if (LastSeen >= FixedWait) {
+    engine.placeBet(currentBet, cashOut, true);
+    }
+});
+engine.on('game_crash', function (data) {
+	if (data.game_crash < (cashOut )) { 			// 	Below
+		LastSeen++;
+		console.log('Counter ' + LastSeen);
+	} else if (data.game_crash >= (cashOut)) 		// 	Above
+	{
+		LastSeen = 0;
+		if (engine.lastGamePlay() == "NOT_PLAYED") { 	//	Missed
+			console.log('Target Missed...');
+			numMissed++;
+		}
+	}
+});
+

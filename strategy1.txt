@@ -1,0 +1,33 @@
+const baseBet = 500;
+
+var currentBet = 500;
+var cashOut = 1.25;
+var RecoveryCashOut=0;
+var LossMultiplier = 0;
+
+engine.on('game_starting', function() {
+    if (engine.lastGamePlay() == 'LOST') {
+	
+	    RecoveryCashOut=((Math.random() *  3.45 ) + 1.55).toFixed(2) ;
+	    LossMultiplier = ((1 / (RecoveryCashOut - 1) + 1)).toFixed(5);
+
+	  
+        currentBet = Math.round(currentBet*LossMultiplier/100) *100;
+		
+        cashOut = RecoveryCashOut ;
+		
+    }
+    if(engine.lastGamePlay() == 'WON'){
+        currentBet = baseBet;
+        cashOut= 1.25;
+		
+		
+		
+    }
+	
+	
+	engine.placeBet(currentBet, Math.round(cashOut * 100));
+   
+});
+
+121362(9.46am)

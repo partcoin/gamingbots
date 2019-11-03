@@ -1,0 +1,64 @@
+const baseBet = 5000;
+var currentBet = 5000;
+var cashOut = 1210;
+var Multiplier=1.11;
+var level1bet=500000;
+var level2bet=2500000;
+engine.on('game_starting', function() {
+    if (engine.lastGamePlay() == 'LOST') {
+	   if (currentBet > level1bet) {
+	    Multiplier=1.05;
+		}
+		if (currentBet > level2bet) {
+	    Multiplier=1.03;
+		}
+		if (currentBet < level1bet) {
+	    Multiplier=1.11;
+		}
+		
+	   
+        currentBet = Math.round(currentBet*Multiplier /100) *100;
+        
+    }
+    if(engine.lastGamePlay() == 'WON'){
+        currentBet = baseBet;
+        cashOut = 1210;
+		Multiplier=1.11;
+		
+    }
+   
+    engine.placeBet(currentBet, cashOut, true);
+    
+
+
+});
+
+576207.58l
+
+
+const baseBet = 20000;
+
+var currentBet = 20000;
+var cashOut =   Math.floor((Math.random() * 10) + 103);
+var randomNum=0;
+var multiplier=0;
+engine.on('game_starting', function() {
+    if (engine.lastGamePlay() == 'LOST') {
+
+   multiplier = ((Math.random() * 0.5) + 2.50);
+   currentBet = Math.round(currentBet*multiplier/100) *100;
+   cashOut = Math.floor((Math.random() * 38) + 122);
+
+
+
+    }
+    if(engine.lastGamePlay() == 'WON'){
+        currentBet = baseBet;
+        cashOut = Math.floor((Math.random() * 19) + 103);
+    }
+    engine.placeBet(currentBet, cashOut, true);
+})
+	
+	503518/11:03pm 100 480
+	                10 48
+					 5  24

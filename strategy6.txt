@@ -1,0 +1,21 @@
+const baseBet = 1000;
+
+var currentBet = 1000;
+var cashOut = 1210;
+
+engine.on('game_starting', function() {
+    if (engine.lastGamePlay() == 'LOST') {
+        currentBet = Math.round(currentBet*1.11/100) *100;
+        cashOut =1210;
+    }
+    if(engine.lastGamePlay() == 'WON'){
+        currentBet = baseBet;
+        cashOut = 1210;
+    }
+    engine.placeBet(currentBet, cashOut, true);
+});
+
+
+
+402627 (1:03)
+

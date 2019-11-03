@@ -1,0 +1,35 @@
+2018-11-02 07:10:12,940 [Thread-4082] INFO  com.oracle.acs.gateway.vo.notification.NotificationTransportClient [] - metaData.                                .{X-Sun-cta-filter-id=54ec2537-7853-4e0d-a461-ff39af98953f, X-Sun-cta-metadata=CTA_ID=54ec2537-7853-4e0d-a461-ff39af98953f&AD                                D_CUSTOMER_EMAIL=YES, CTA_SEND_TIME=1541142612940}
+2018-11-02 07:10:12,942 [Thread-4082] INFO  com.oracle.acs.gateway.vo.notification.NotificationTransportClient [] - NOTIFICAT                                ION JSON ********************:: [{"recipients":[{"id":"anupama13aug@gmail.com","type":"EMAIL_ADDRESS","addressLine":"TO"},{"i                                d":"gw_cua@gmail.com","type":"EMAIL_ADDRESS","addressLine":"TO"},{"id":"test_cua@gmail.com","type":"EMAIL_ADDRESS","addressLi                                ne":"TO"},{"id":"custadm@oracle.com","type":"EMAIL_ADDRESS","addressLine":"TO"},{"id":"awa_gwcustasd@gmail.com","type":"EMAIL                                _ADDRESS","addressLine":"TO"},{"id":"generic_cust@oracle.com","type":"EMAIL_ADDRESS","addressLine":"TO"},{"id":"awadheshjha20                                09@gmail.com","type":"EMAIL_ADDRESS","addressLine":"TO"},{"id":"zt_auto_custadmin@gmail.com","type":"EMAIL_ADDRESS","addressL                                ine":"TO"},{"id":"bhargavi.kuligod@gmail.com","type":"EMAIL_ADDRESS","addressLine":"TO"},{"id":"abhay.patil@oracle.com","type                                ":"EMAIL_ADDRESS","addressLine":"TO"},{"id":"tony.marshall@oracle.com","type":"EMAIL_ADDRESS","addressLine":"TO"},{"id":"plat                                inum_activation_in_grp@oracle.com","type":"EMAIL_ADDRESS","addressLine":"CC"}],"subject":"Engineered System Activation","cont                                entType":"text/html","content":null,"template":{"referenceId":"EngineeredSystemActivation","bindings":{"mos":"tony.marshall@o                                racle.com","rackSerial":"AK00039269","systemName":"DB Machine aeldb3123","customerContact":"","gatewayName":"gw16223","reques                                tID":"100081","systemType":"exadata","csi":"19005462","systemRequestDate":"02/11/2018","customerName":"ENGINEERING TEST","sr"                                :""}},"from":"noreply@oracle.com"}]
+2018-11-02 07:10:12,942 [Thread-4082] INFO  com.oracle.acs.gateway.vo.notification.NotificationTransportClient [] - Got trans                                port service : com.oracle.acs.gateway.t
+
+
+0xaa8ac6ed90c9ed131ea224163f46d5def68447ea
+
+
+const baseBet = 200;
+var lossCount=0;
+var actualBet=20000;
+var currentBet = 200;
+var cashOut = 200;
+
+engine.on('game_starting', function() {
+    if (engine.lastGamePlay() == 'LOST') {
+	    lossCount++;
+		
+		if ( lossCount == 6 )
+		{
+		currentBet=actualBet;
+		}
+		if ( lossCount != 6 ) 
+		{
+        currentBet = Math.round(currentBet*2.7/100) *100;
+		}
+        cashOut -= 6;
+    }
+    if(engine.lastGamePlay() == 'WON'){
+        currentBet = baseBet;
+        cashOut = 200;
+		lossCount=0;
+    }
+    engine.placeBet(currentBet, cashOut, true);
+});

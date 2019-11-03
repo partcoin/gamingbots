@@ -1,0 +1,54 @@
+var currentBet = 10000; 
+var baseBet=10000;
+var cashOut = 198;
+var LastSeen = 0;
+var FixedWait = 2;
+var numMissed=0;
+engine.on('game_starting', function() {
+    if (engine.lastGamePlay() == 'LOST') {   	      
+         currentBet = (currentBet*2) + baseBet;       
+         cashOut = 198;
+		 FixedWait=FixedWait+2;
+		 
+		
+		
+		
+        
+    }
+    if(engine.lastGamePlay() == 'WON'){
+        currentBet = baseBet;
+        cashOut = 198;
+		LastSeen = 0;
+		FixedWait=2;
+		
+		
+    }
+	
+     if (LastSeen < FixedWait) {
+		console.log('Waiting Phase... ' + (FixedWait - LastSeen ));
+	}
+	if (LastSeen >= FixedWait) {
+    engine.placeBet(currentBet, cashOut, true);
+    }
+
+	
+});
+
+engine.on('game_crash', function (data) {
+	if (data.game_crash < (cashOut )) { 			// 	Below
+		LastSeen++;
+		console.log('Counter ' + LastSeen);
+	} else if (data.game_crash >= (cashOut)) 		// 	Above
+	{
+		LastSeen = 0;
+		FixedWait=2;
+		if (engine.lastGamePlay() == "NOT_PLAYED") { 	//	Missed
+			console.log('Target Missed...');
+			numMissed++;
+		}
+	}
+	});
+	
+	458100 (9:02am)
+	
+	Bxw7rfmBfqn

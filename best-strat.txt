@@ -1,0 +1,45 @@
+//Pattern Algorithm skips 4 reds under 1.5 and enters to aim for 2x and lower if not won..
+const baseBet = 10000;
+var LastSeen = 0;
+var FixedWait = 3;
+var currentBet = 10000;
+var cashOut = 200;
+var numMissed=0;
+var waitOut=150;
+engine.on('game_starting', function() {
+    if (engine.lastGamePlay() == 'LOST') {
+        currentBet = Math.round(currentBet*2.7 /100) *100;
+        cashOut -= 6;
+		LastSeen=0;
+    }
+    if(engine.lastGamePlay() == 'WON'){
+        currentBet = baseBet;
+        cashOut = 200;
+		LastSeen=0;
+    }
+    if (LastSeen < FixedWait) {
+		console.log('Waiting Phase... ' + (FixedWait - LastSeen ));
+	}
+	if (LastSeen >= FixedWait) {
+    engine.placeBet(currentBet, cashOut, true);
+    }
+
+
+});
+engine.on('game_crash', function (data) {
+	if (data.game_crash < (waitOut )) { 			// 	Below
+		LastSeen++;
+		console.log('Counter ' + LastSeen);
+	} else if (data.game_crash >= (waitOut)) 		// 	Above
+	{
+		LastSeen = 0;
+		if (engine.lastGamePlay() == "NOT_PLAYED") { 	//	Missed
+			console.log('Target Missed...');
+			numMissed++;
+		}
+	}
+	});
+	
+	zverev21 1915000 (7pm)
+	btcnbtc 1916000(7pm)
+	ethgeth/C8xz1vxmmf

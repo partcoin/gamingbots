@@ -1,0 +1,46 @@
+
+.
+
+const baseBet = 500
+const actualBet=30000;
+var currentBet = 500;
+var cashOut = 200;
+var lossCount;
+
+engine.on('game_starting', function() {
+    if (engine.lastGamePlay() == 'LOST') {
+	    lossCount++;
+		currentBet = Math.round(currentBet*2.7/100) *100;
+		if (lossCount == 3) { currentBet=actualBet; }
+        cashOut -= 10;
+    }
+    if(engine.lastGamePlay() == 'WON'){
+        currentBet = baseBet;
+        cashOut=200;
+		lossCount=0;
+    }
+    engine.placeBet(currentBet, cashOut, true);
+});
+
+1145692 9:23pm
+
+const baseBet = 3900;
+
+var currentBet = 3900;
+var cashOut = 200;
+
+
+engine.on('game_starting', function() {
+    if (engine.lastGamePlay() == 'LOST') {
+	    lossCount++;
+		currentBet = Math.round(currentBet*2.7/100) *100;
+		
+        cashOut -= 3;
+    }
+    if(engine.lastGamePlay() == 'WON'){
+        currentBet = baseBet;
+        cashOut=200;
+		lossCount=0;
+    }
+    engine.placeBet(currentBet, cashOut, true);
+});

@@ -1,0 +1,70 @@
+var currentBet = 3000; 
+var baseBet=3000;
+var cashOut = 1210;
+var LastSeen = 0;
+var FixedWait = 13;
+var numMissed=0;
+var loss=0;
+engine.on('game_starting', function() {
+    if (engine.lastGamePlay() == 'LOST') {             
+        loss++;
+        
+		if ( loss <13) {
+		currentBet = Math.round(currentBet*1.11/100) *100;
+		}
+		if ( loss >= 13) {
+		
+                 LastSeen = 0;
+				 loss=0;
+				 currentBet = Math.round(currentBet*1.11/100) *100;
+				 }
+         
+                
+        
+        
+    }
+    if(engine.lastGamePlay() == 'WON'){
+        currentBet = baseBet;
+		
+        
+        LastSeen = 0;
+      
+        
+        
+    }
+    
+     if (LastSeen < FixedWait) {
+        console.log('Waiting Phase... ' + (FixedWait - LastSeen ));
+    }
+    if (LastSeen >= FixedWait) {
+    engine.placeBet(currentBet, cashOut, true);
+    }
+
+    
+});
+
+engine.on('game_crash', function (data) {
+    if (data.game_crash < (cashOut )) {             //     Below
+        LastSeen++;
+		 
+		 console.log('Counter ' + LastSeen);
+        
+        
+    } else if (data.game_crash >= (cashOut))         //     Above
+    {     LastSeen = 0;
+	     
+       
+        if (engine.lastGamePlay() == "NOT_PLAYED") {     //    Missed
+            console.log('Target Missed...');
+            numMissed++;
+        }
+    }
+    });
+	
+	251k 11pm
+	324k 12pm (13hrs)*
+	371k 6pm
+	408k 12:21am (25hr)
+	524k 3:05pm (39hrs)
+	536k 6:03pm (42hrs)
+	606k 7:39am

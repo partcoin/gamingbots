@@ -1,0 +1,30 @@
+
+.
+
+var currentBet = 2200;// This bet is increased each time you lose. 50000 = 500 ETHOS and so on.
+var cashOut = 150;
+
+engine.on('game_starting', function() {
+    if (engine.lastGamePlay() == 'LOST') {
+        currentBet = Math.round(currentBet*3/100) *100;
+        cashOut -= 3;
+    }
+    if(engine.lastGamePlay() == 'WON'){
+         currentBet = Math.round(currentBet*0.3/100) *100;
+         cashOut += 6;
+		 if (currentBet > 2200) {
+			currentBet=2200;
+		 }
+		 if (currentBet < 100) {
+			currentBet=2200;
+		 }
+    }
+    engine.placeBet(currentBet, cashOut, true);
+});
+
+
+console.log('Balance: ' + engine.getBalance());
+
+2216217.23 7.52
+
+

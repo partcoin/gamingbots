@@ -1,0 +1,20 @@
+const baseBet = 1800// 
+
+var currentBet = 1800;//  
+const basecashOut = 200; //200 is 2x cashout
+var currentcashOut = 200;
+
+engine.on('game_starting', function() {
+    if (engine.lastGamePlay() == 'LOST') {
+        currentBet = Math.round(currentBet*1.75/100) *100;
+        currentcashOut += 6;
+    }
+    if(engine.lastGamePlay() == 'WON'){
+        currentBet = baseBet;
+        currentcashOut = basecashOut;
+    }
+    engine.placeBet(currentBet, currentcashOut, true);
+});
+
+
+

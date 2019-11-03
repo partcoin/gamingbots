@@ -1,0 +1,127 @@
+var BaseBet = 3; 			// Ethos
+var CashOut = 2.00; 		// Normal CashOut
+var RecoveryCashOut = 1.25; 	// Recovery CashOut
+
+var FixedWait = 0;
+
+var TargetProfit = 15000; 	// Target Profit (Stop Script Automatically)
+
+// ****************** Do not modify from here ********** ///
+var InitBalance = engine.getBalance();
+var CurrentCashOut = CashOut;
+var CurrentBet = BaseBet;
+var LossMultiplier = ((1 / (RecoveryCashOut - 1) + 1)).toFixed(5);	// Calculate the appropriate multiplier for the RecoveryCashOut 
+var FirstLose = true;		// Handler to repeat same BaseBet after first losing.
+
+// Stats
+var numWins = 0;
+var numLosses = 0;
+var maxWinStreak = 0;
+var maxLossStreak = 0;
+var currentWinStreak = 0;
+var currentLossStreak = 0;
+var ProfitPercent = 0;
+
+// Time Stats
+var d = new Date();
+var StartTime = d.getTime();
+var LastSeen = 0;
+var numMissed = 0;
+
+engine.on('game_starting', function (info) {
+
+	// Time Stats
+	var newdate = new Date();
+	var timeplaying = ((newdate.getTime() - StartTime) / 1000) / 60;
+	Profit = ((engine.getBalance() - InitBalance) / 100).toFixed(2);
+	ProfitPercent = (((engine.getBalance() / InitBalance) - 1) * 100).toFixed(2)
+	
+	console.clear()
+	console.log('====== ygno1 Bot ======');
+	console.log('My username is: ' + engine.getUsername());
+	console.log('Initial Balance: ' + (InitBalance / 100).toFixed(2) + ' ethos');
+	console.log('Current Balance: ' + (engine.getBalance() / 100).toFixed(2) + ' ethos');
+	console.log('Target Profit ' + TargetProfit + ' ethos');
+	console.log('====== Session ======');
+	console.log('Session profit: ' + Profit + ' ethos');
+	console.log('Profit Percentage: '+ ProfitPercent + '%');
+	console.log('====== Stats ======');
+	console.log(' Wins: ' + numWins + ' | Losses: ' + numLosses + ' | Missed: ' + numMissed);
+	console.log(' Max Win Streak: ' + maxWinStreak + ' | Max Loss Streak: ' + maxLossStreak);
+	console.log(' Tot. Games: ' + (numWins + numLosses)+ ' in ' + Math.round(timeplaying) + ' minutes.');
+	console.log('======  ======');
+
+	// LOST: Recovery routine.
+	if (engine.lastGamePlay() == 'LOST') {
+		console.log('Game Lost...');
+		CurrentCashOut = RecoveryCashOut;
+		CurrentBet *= LossMultiplier;
+		if (FirstLose) {CurrentBet = BaseBet; FirstLose = false;}
+		
+		// Stats
+		numLosses++;
+		currentLossStreak++;
+		currentWinStreak = 0;
+		maxLossStreak = (currentLossStreak > maxLossStreak) ? currentLossStreak : maxLossStreak;
+		
+	}
+
+	// WIN: Return to Normal conditions.
+	if (engine.lastGamePlay() == 'WON') {
+		CurrentCashOut = CashOut;
+		CurrentBet = BaseBet;
+
+		// Change to simple Martingale
+		FirstLose=true;
+	}
+
+	if (LastSeen < FixedWait) {
+		console.log('Waiting Phase... ' + (FixedWait - LastSeen ));
+	}
+	if (LastSeen >= FixedWait) {
+		console.log('Placing bet of', Math.floor(CurrentBet), 'at', Math.round(CurrentCashOut * 100) / 100, 'x');
+		engine.placeBet(Math.round(CurrentBet) * 100, Math.round(CurrentCashOut * 100));
+	}
+	
+});
+
+engine.on('cashed_out', function (data) {
+	if (data.username == engine.getUsername()) {
+		console.log('Successfully cashed out at ' + (data.stopped_at / 100) + 'x');
+		
+		// Stats
+        numWins++;
+		currentWinStreak++;
+		currentLossStreak = 0;
+		maxWinStreak = (currentWinStreak > maxWinStreak) ? currentWinStreak : maxWinStreak;
+		
+		
+		Profit = ((engine.getBalance() - InitBalance) / 100).toFixed(2);
+		ProfitPercent = (((engine.getBalance() / InitBalance) - 1) * 100).toFixed(2)
+		if (((engine.getBalance() - InitBalance) / 100).toFixed(2) >= TargetProfit) {
+			console.log('Target Profit reached, bot is shutting down...');
+			console.log('You have made ' + Profit + ' profit this session.');
+			console.log('Profit percentage: ' + ProfitPercent + '%');
+
+			engine.stop();
+		}
+		
+		
+	}
+});
+
+engine.on('game_crash', function (data) {
+	if (data.game_crash < (CashOut * 100)) { 			// 	Below
+		LastSeen++;
+		console.log('Counter ' + LastSeen);
+	} else if (data.game_crash >= (CashOut * 100)) 		// 	Above
+	{
+		LastSeen = 0;
+		if (engine.lastGamePlay() == "NOT_PLAYED") { 	//	Missed
+			console.log('Target Missed...');
+			numMissed++;
+		}
+	}
+
+
+});

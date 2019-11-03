@@ -1,0 +1,48 @@
+
+
+
+
+
+var currentBet = 20000;
+var cashOut = 10000;
+
+ engine.on('game_starting', function() {
+    if (engine.lastGamePlay() == 'LOST') { 
+	     
+       
+		if (cashOut > 200) {
+		
+		cashOut= Math.round(cashOut/2);
+		currentBet = Math.round(currentBet*2/100) *100 ;
+		}
+		
+		
+		
+		if (cashOut < 200) {
+		
+	    currentBet = Math.round(currentBet*2.7/100) *100;
+        cashOut -= 3;
+
+		}
+		
+		}
+    if(engine.lastGamePlay() == 'WON'){
+         
+		 currentBet = 20000;
+		 
+         cashOut= 10000;
+		 
+   
+   
+    
+   
+    }
+	
+    
+    engine.placeBet(currentBet, cashOut, true);
+}); 
+
+1097000
+
+100 50 25 12.5 6.25  3.1   15 7   3    2
+20   40  60  80  100 120 140 160 180 2000
